@@ -11,15 +11,16 @@ const About = () => {
           <div className="prose prose-lg max-w-none">
             <p className="text-lg leading-relaxed text-foreground/90">
               Hi! I'm Sarthak, a passionate educator specializing in mathematics and computer science. 
-              As a student at the University of California, Berkeley, pursuing Computer Science, I bring 
-              both academic excellence and real-world programming experience to my tutoring sessions.
+              As a Turing Scholar at the University of Texas at Austin, I'm pursuing a dual degree in 
+              Computer Science and Mathematics, bringing both academic excellence and real-world programming 
+              experience to my tutoring sessions.
             </p>
             
             <p className="text-lg leading-relaxed text-foreground/90">
-              My journey in competitive programming, including participation in the USA Computing Olympiad 
-              and various math competitions, has given me deep insights into problem-solving strategies that 
-              I love sharing with my students. I've helped students excel in AP Computer Science, prepare for 
-              programming contests, and build strong foundations in mathematics from algebra through calculus.
+              My competitive achievements include reaching USACO Platinum division, qualifying for AIME 
+              six times, scoring a perfect 36/36 on the ACT, and authoring research published at the 
+              NeurIPS High School Research Conference. These experiences have given me deep insights into 
+              problem-solving strategies that I love sharing with my students.
             </p>
             
             <p className="text-lg leading-relaxed text-foreground/90">
@@ -35,24 +36,24 @@ const About = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <GraduationCap className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold text-lg">UC Berkeley Student</h3>
-              <p className="text-sm text-muted-foreground">Studying Computer Science at one of the world's top universities</p>
+              <h3 className="font-semibold text-lg">UT Austin Turing Scholar</h3>
+              <p className="text-sm text-muted-foreground">Dual degree in Computer Science and Mathematics</p>
             </div>
 
             <div className="bg-background p-6 rounded-xl shadow-soft text-center space-y-3 hover:shadow-medium transition-shadow">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Code className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold text-lg">Contest Experience</h3>
-              <p className="text-sm text-muted-foreground">USACO competitor with strong algorithmic problem-solving skills</p>
+              <h3 className="font-semibold text-lg">Elite Competitor</h3>
+              <p className="text-sm text-muted-foreground">USACO Platinum, 6x AIME qualifier, perfect ACT score</p>
             </div>
 
             <div className="bg-background p-6 rounded-xl shadow-soft text-center space-y-3 hover:shadow-medium transition-shadow">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Award className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold text-lg">Proven Results</h3>
-              <p className="text-sm text-muted-foreground">Helping students achieve their academic goals and build confidence</p>
+              <h3 className="font-semibold text-lg">Research Author</h3>
+              <p className="text-sm text-muted-foreground">Published at NeurIPS High School Research Conference</p>
             </div>
           </div>
         </div>
