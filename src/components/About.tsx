@@ -24,6 +24,10 @@ const About = () => {
             </p>
             
             <p className="text-lg leading-relaxed text-foreground/90">
+              I also earned a score of 5 on <strong>AP Calculus AB</strong>, <strong>AP Calculus BC</strong>, <strong>AP Statistics</strong>, and <strong>AP Computer Science A</strong>, among others.
+            </p>
+            
+            <p className="text-lg leading-relaxed text-foreground/90">
               Whether you're struggling with a specific concept, preparing for an exam, or looking to advance 
               your skills, I create personalized lesson plans tailored to your learning style and goals. My 
               approach combines clear explanations, practical examples, and plenty of practice to ensure lasting 
