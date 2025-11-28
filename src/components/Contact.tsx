@@ -18,7 +18,16 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would send the form data to a backend
+    // Open user's email client with a pre-filled message to Polywise
+    const subject = formData.subject?.trim() || "New tutoring inquiry";
+    const bodyLines = [
+      `Name: ${formData.name}`,
+      `Email: ${formData.email}`,
+      "",
+      formData.message
+    ];
+    const mailtoUrl = `mailto:polywisellc@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    window.location.href = mailtoUrl;
     toast({
       title: "Message Sent!",
       description: "Thank you for your interest. I'll get back to you soon!",
@@ -57,10 +66,10 @@ const Contact = () => {
                       Send me an email and I'll respond within 24 hours.
                     </p>
                     <a 
-                      href="mailto:contact@polywise.com" 
+                      href="mailto:polywisellc@gmail.com" 
                       className="text-primary hover:underline font-medium"
                     >
-                      contact@polywise.com
+                      polywisellc@gmail.com
                     </a>
                   </div>
                 </div>
@@ -79,9 +88,10 @@ const Contact = () => {
                       Book directly using my Calendly link for instant confirmation.
                     </p>
                     <a 
-                      href="#" 
+                      href="https://calendly.com/polywisellc/30min" 
                       className="text-primary hover:underline font-medium"
-                      onClick={(e) => e.preventDefault()}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       View Available Times
                     </a>
