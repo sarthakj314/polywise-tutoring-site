@@ -88,7 +88,7 @@ const Contact = () => {
                       Book directly using my Calendly link for instant confirmation.
                     </p>
                     <a 
-                      href="https://calendly.com/polywisellc/30min" 
+                      href="https://calendly.com/polywisellc/introduction" 
                       className="text-primary hover:underline font-medium"
                       target="_blank"
                       rel="noopener noreferrer"
