@@ -8,7 +8,7 @@ const Pricing = () => {
   };
 
   return (
-    <section id="pricing" className="section-padding bg-secondary/30">
+    <section id="pricing" className="section-padding bg-background">
       <div className="container-width">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-4">Pricing & Format</h2>
         <div className="w-24 h-1 bg-primary mx-auto mb-12 rounded-full" />
