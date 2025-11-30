@@ -12,8 +12,8 @@ const Hero = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6 animate-fade-in">
           <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              Online Tutoring in{" "}
-              <span className="text-primary">Math, CS & Test Prep</span>
+              1-on-1 Tutoring,{" "}
+              <span className="text-primary">Personalized for You</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               1-on-1 online tutoring for SAT/ACT prep, AP courses, competitive math & programming, 
