@@ -3,25 +3,25 @@ import { Calculator, Code2, Brain, Trophy } from "lucide-react";
 
 const Services = () => {
   const mathTopics = [
+    "SAT/ACT Math Prep",
+    "Calculus (AP & beyond)",
+    "AMC/AIME Math Competition Prep",
+    "Statistics & Probability",
     "Algebra & Pre-Algebra",
     "Geometry",
     "Trigonometry",
-    "Pre-Calculus",
-    "Calculus (AP & beyond)",
-    "Statistics & Probability",
-    "SAT/ACT Math Prep",
-    "Math Competition Prep"
+    "Pre-Calculus"
   ];
 
   const codingTopics = [
-    "Python Programming",
-    "Java Programming",
-    "Data Structures & Algorithms",
     "AP Computer Science A",
     "AP Computer Science Principles",
     "USACO Contest Preparation",
-    "Object-Oriented Programming",
-    "Web Development Basics"
+    "Machine Learning Principles",
+    "Python Programming",
+    "Java Programming",
+    "Data Structures & Algorithms",
+    "Object-Oriented Programming"
   ];
 
   return (
