@@ -11,13 +11,13 @@ const Hero = () => {
       <div className="container-width w-full">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-              Personalized Online Tutoring in{" "}
-              <span className="text-primary">Math & Coding</span>
+          <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+              Online Tutoring in{" "}
+              <span className="text-primary">Math, CS & Test Prep</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Expert 1-on-1 online lessons designed to build confidence, improve grades, 
-              and unlock your full potential in mathematics and computer science.
+              1-on-1 online tutoring for SAT/ACT prep, AP courses, competitive math & programming, 
+              and everything in between. Build skills, boost scores, and reach your goals.
             </p>
             <div className="flex gap-4 pt-4">
               <Button 
