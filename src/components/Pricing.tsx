@@ -18,7 +18,7 @@ const Pricing = () => {
             <CardContent className="p-8 md:p-12">
               <div className="text-center mb-8">
                 <div className="inline-flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl md:text-6xl font-bold text-primary">$50</span>
+                  <span className="text-5xl md:text-6xl font-bold text-primary">$75</span>
                   <span className="text-2xl text-muted-foreground">/hour</span>
                 </div>
                 <p className="text-lg text-muted-foreground">
