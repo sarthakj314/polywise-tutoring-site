@@ -1,73 +1,56 @@
-# Welcome to your Lovable project
+# Polywise — Palace
 
-## Project info
+The MVP marketing site for Polywise: an AI-personalized learning environment that teaches
+every concept five ways, measures which one a learner actually retains, and then generates
+the tutor, the interface and the month of work that fit the result.
 
-**URL**: https://lovable.dev/projects/bf933059-e1cc-4cd6-8e95-3004d83067cb
+Live sections:
 
-## How can I edit this code?
+| §  | Section     | What it does                                                                    |
+| -- | ----------- | ------------------------------------------------------------------------------- |
+| —  | Hero        | Positioning + the palace mark (nested rooms around one person)                   |
+| 01 | Atlas       | The eight domains and their tracks, hover/click to explore                       |
+| 02 | The loop    | Six-stage scroll-drawn roadmap with the weekly return arrow                      |
+| 03 | The palace  | Interactive template of a generated environment — five rooms, week 1 vs week 6   |
+| 04 | Engine      | The four systems (bandit, tutor adapters, layout synthesis, spaced scheduling)   |
+| —  | Manifesto   | The one-teacher-thirty-students constraint, and its absence                      |
+| —  | Enroll      | Cohort CTA + footer                                                              |
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/bf933059-e1cc-4cd6-8e95-3004d83067cb) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Running it
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm install
+npm run dev      # http://localhost:8080
+npm run build    # production build into docs/ (GitHub Pages serves from there)
 ```
 
-**Edit a file directly in GitHub**
+## Stack
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Vite + React 18 + TypeScript. No UI framework and no CSS framework — `src/index.css` is a
+single hand-authored stylesheet, and every icon and illustration is inline SVG. The only
+runtime dependencies are `react` and `react-dom`.
 
-**Use GitHub Codespaces**
+## The drawing system
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+All illustrations come from two files, so the whole site reads as one hand:
 
-## What technologies are used for this project?
+- `src/components/Figures.tsx` — one character in a 60 × 100 box (head r9 at 30,15; hips at
+  30,62; floor at 96), drawn in eleven poses, plus a small library of props at the same
+  stroke weight. Never redraw a person inline; add a pose here instead.
+- `src/components/Scenes.tsx` — compositions built from those parts: the six roadmap scenes,
+  the classroom comparison, the per-domain vignettes, the engine diagrams, the CTA.
 
-This project is built with:
+Stroke weight is normalised through the `scale` prop (`strokeWidth={2 / scale}`), so a figure
+placed at any size keeps the same line thickness as everything around it.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Type & color
 
-## How can I deploy this project?
+- Display: Fraunces · Body: Instrument Sans · Labels: IBM Plex Mono (loaded from Google Fonts
+  in `index.html`; every family has a system fallback stack in `src/index.css`).
+- Near-black ground (`#08080a`) with a champagne→copper gradient (`--grad-warm`) as the only
+  accent, plus a cold `--ice` used exclusively for measured/telemetry values.
 
-Simply open [Lovable](https://lovable.dev/projects/bf933059-e1cc-4cd6-8e95-3004d83067cb) and click on Share -> Publish.
+## Deploying
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+`npm run build` writes to `docs/`, which GitHub Pages serves at the `CNAME` domain
+(`www.polywise.net`). `public/CNAME` is copied into the build automatically.
