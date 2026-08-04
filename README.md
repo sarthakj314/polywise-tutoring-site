@@ -34,19 +34,29 @@ runtime dependencies are `react` and `react-dom`.
 
 All illustrations come from two files, so the whole site reads as one hand:
 
-- `src/lib/draw.ts` — `limb(spine, widths, caps)` offsets a few joint points into a closed,
-  tapered contour. That is what makes the people contour drawings rather than stick figures:
-  shoulders wider than waist, thighs wider than calves, hands and feet that come to a point.
-  Caps are round where a limb ends in the open and flat where it disappears under another part.
-- `src/components/Figures.tsx` — one character in a 60 × 100 box (head at 30,13; shoulders y27;
-  hips y53; floor y96), in eleven poses, plus props at the same stroke weight. Parts are filled
-  with `--fig-bg` (set per surface in CSS) and stroked, so limbs overlap cleanly. Never redraw a
-  person inline; add a pose here instead.
-- `src/components/Scenes.tsx` — compositions built from those parts: the six roadmap scenes,
-  the classroom comparison, the per-domain vignettes, the engine diagrams, the CTA.
+- `src/components/Figures.tsx` — one character, drawn as a clean monoline
+  pictogram: a single stroke weight, round caps and joins, no fills, no traced
+  wobble. The torso is a shape (a stroked, waisted rounded rectangle) rather
+  than a line, which is what keeps it from reading as a stick figure; limbs are
+  straight runs with rounded joints. The rig, in a 60 × 100 box: head circle
+  r7.5 at (30,12) · neck to y26 · shoulders y26, 21 wide, joints at (20,31) and
+  (40,31) · hips y56, 15 wide, joints at (26,57) and (34,57) · knee y75 ·
+  ankle y93 · floor y96. Add a pose to the `poseParts()` switch; never draw a
+  person inline anywhere else.
+- `src/components/Scenes.tsx` — compositions built from those parts: the six
+  roadmap scenes, the classroom comparison, the per-domain vignettes, the engine
+  diagrams, the CTA.
 
-Stroke weight is normalised through the `scale` prop (`strokeWidth={1.5 / scale}`), so a figure
-placed at any size keeps the same line thickness as everything around it.
+Stroke weight is normalised through `scale` (`strokeWidth={STROKE * weight / scale}`),
+so a figure placed at any size keeps the same line thickness as everything around
+it. `weight` trims that where a crowd of small figures would otherwise look heavy
+(the thirty students in the manifesto run at 0.62).
+
+If you'd rather use a drawing from elsewhere, `tools/` has two importers that
+normalise any source into this same rig — `import-figure.mjs` for SVG (rendered
+in headless Chromium so transforms, arcs and primitives all resolve) and
+`trace-figure.py` for raster line art (skeletonised to a centre line). Both emit
+a paste-ready pose block. See `art/README.md`.
 
 ## Type & color
 

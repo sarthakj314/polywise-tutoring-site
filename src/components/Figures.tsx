@@ -1,18 +1,21 @@
 /* ------------------------------------------------------------------
-   The Polywise people.
+   The Polywise people — clean monoline figures.
 
-   Not stick figures: each person is drawn as a set of tapered contours
-   — shoulders wider than waist, thighs wider than calves, hands and
-   feet that come to a point — generated from a skeleton in lib/draw.
-   Every part is filled with the page colour and stroked, so limbs
-   overlap cleanly instead of crossing through the body.
+   Drawn the way a good pictogram set is drawn: one stroke weight, round
+   caps and joins, exact geometry, no fills, no traced wobble. The torso
+   is a shape rather than a line, which is what keeps these from reading
+   as stick figures; everything else is a straight run with a rounded
+   joint.
 
-   Grid: a 60 × 100 box. Head at (30,13). Shoulders y27. Hips y53.
-   Floor y96. Everything on the site uses this same rig.
+   The rig, in a 60 × 100 box:
+     head      circle r7.5 at (30, 12)
+     neck      (30, 19.5) → (30, 26)
+     shoulders y26, 21 wide  · joints at (20, 31) and (40, 31)
+     hips      y56, 15 wide  · joints at (26, 57) and (34, 57)
+     knee      y75 · ankle y93 · floor y96
    ------------------------------------------------------------------ */
 
 import { CSSProperties, ReactNode } from "react";
-import { limb, stroke, Pt } from "../lib/draw";
 
 export type Pose =
   | "stand"
@@ -34,222 +37,203 @@ const TONE: Record<string, string> = {
   ice: "#a9c9c3",
 };
 
-/* ---------- shared parts ---------- */
+/* ---------- fixed parts ---------- */
 
-const NECK = limb(
-  [
-    [30, 19],
-    [30, 29],
-  ],
-  [7, 9.5],
-  { start: "flat", end: "flat" }
-);
+const HEAD = { cx: 30, cy: 12, r: 7.5 };
+const NECK = "M30 19.5 V26";
 
-const TORSO = limb(
-  [
-    [30, 27],
-    [30, 40],
-    [30, 53],
-  ],
-  [21, 15.5, 17],
-  { end: "flat" }
-);
+/** Shoulders 21 wide, drawn in at the waist, hips 15 wide. Corners are true arcs. */
+const TORSO =
+  "M19.8 30.5 C19.8 27.6 21.6 26 24 26 L36 26 C38.4 26 40.2 27.6 40.2 30.5 " +
+  "L38.2 52.5 C38 55.2 36.6 56.6 34.4 56.6 L25.6 56.6 C23.4 56.6 22 55.2 21.8 52.5 Z";
 
-const TORSO_SIDE = limb(
-  [
-    [30, 27],
-    [30.5, 41],
-    [30, 53],
-  ],
-  [15, 13.5, 16],
-  { end: "flat" }
-);
+/** The same torso from the side — narrower. */
+const TORSO_SIDE =
+  "M25.6 30.5 C25.6 27.6 27.2 26 29.4 26 L33.4 26 C35.6 26 37.2 27.6 37.2 30.5 " +
+  "L36 52.5 C35.8 55.2 34.6 56.6 32.6 56.6 L27.4 56.6 C25.4 56.6 24.2 55.2 24 52.5 Z";
 
-const HAIR = "M23.2 7.6 C 26 4.4, 34 4.2, 36.8 7.2";
-
-function arm(a: Pt, b: Pt, c: Pt) {
-  return limb([a, b, c], [9, 6.4, 4.2], { start: "flat" });
-}
-
-function leg(a: Pt, b: Pt, c: Pt) {
-  return limb([a, b, c], [13, 8.4, 5.4], { start: "flat" });
-}
-
-function foot(a: Pt, b: Pt) {
-  return limb([a, b], [5.4, 3.4]);
-}
+const line = (...pts: [number, number][]) =>
+  pts.map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`).join(" ");
 
 type Part = { d: string; soft?: boolean };
 
-function head(cx = 30, cy = 13, rot = 0): ReactNode {
-  return (
-    <g key="head" transform={rot ? `rotate(${rot} ${cx} ${cy})` : undefined}>
-      <ellipse cx={cx} cy={cy} rx="7.2" ry="8.6" />
-      <path d={HAIR} fill="none" opacity="0.75" transform={`translate(${cx - 30} ${cy - 13})`} />
-    </g>
-  );
-}
-
 /* ---------- poses ---------- */
 
-const LEGS_TOGETHER: Part[] = [
-  { d: leg([26, 49], [24.5, 73], [23.5, 92]) },
-  { d: leg([34, 49], [35.5, 73], [36.5, 92]) },
-  { d: foot([23.5, 92.5], [19.5, 95.5]) },
-  { d: foot([36.5, 92.5], [40.5, 95.5]) },
+const LEGS: Part[] = [
+  { d: line([26, 57], [24.6, 75], [23.6, 93], [19.4, 95.4]) },
+  { d: line([34, 57], [35.4, 75], [36.4, 93], [40.6, 95.4]) },
 ];
 
 const LEGS_APART: Part[] = [
-  { d: leg([26, 49], [23.5, 73], [21.5, 92]) },
-  { d: leg([34, 49], [36.5, 73], [38.5, 92]) },
-  { d: foot([21.5, 92.5], [17.5, 95.5]) },
-  { d: foot([38.5, 92.5], [42.5, 95.5]) },
+  { d: line([26, 57], [23, 75], [20.6, 93], [16.4, 95.4]) },
+  { d: line([34, 57], [37, 75], [39.4, 93], [43.6, 95.4]) },
 ];
+
+const ARM_L: Part = { d: line([20, 31], [16.6, 44], [15.6, 55.5]) };
+const ARM_R: Part = { d: line([40, 31], [43.4, 44], [44.4, 55.5]) };
 
 const CHAIR: Part[] = [
-  { d: stroke([[21, 63], [21, 38]]), soft: true },
-  { d: stroke([[19, 63], [53, 63]]), soft: true },
-  { d: stroke([[23, 63], [23, 93]]), soft: true },
-  { d: stroke([[51, 63], [51, 93]]), soft: true },
+  { d: "M21 63 V38", soft: true },
+  { d: "M19 63 H53", soft: true },
+  { d: "M23.5 63 V93", soft: true },
+  { d: "M50.5 63 V93", soft: true },
 ];
 
+/** Side view: torso upright, thigh forward, shin down, foot out. */
 const SEATED: Part[] = [
   { d: NECK },
   { d: TORSO_SIDE },
-  { d: limb([[30, 54], [39, 58], [49, 59]], [16, 12, 9], { start: "flat" }) },
-  { d: limb([[49, 59], [49.5, 74], [50, 90]], [9, 7, 5.2], { start: "flat" }) },
-  { d: foot([50, 90.5], [55, 94]) },
+  { d: line([30, 56], [48, 58.5], [49, 75], [49.4, 92], [54.4, 94.4]) },
 ];
 
-/** Front-view body: neck, torso, then the legs on top so the torso ends cleanly. */
-function upright(legs: Part[] = LEGS_TOGETHER): Part[] {
-  return [{ d: NECK }, { d: TORSO }, ...legs];
-}
+function poseParts(pose: Pose): {
+  parts: Part[];
+  head: { cx: number; cy: number; rot?: number };
+  extra?: Part[];
+} {
+  const H = { cx: HEAD.cx, cy: HEAD.cy };
 
-function parts(pose: Pose): { back: Part[]; front: Part[]; headNode: ReactNode; extra?: Part[] } {
   switch (pose) {
     case "walk":
       return {
-        back: [
-          { d: arm([38, 29], [42.5, 40], [44, 50]) },
-          { d: leg([32.5, 49], [38, 72], [42.5, 90]) },
-          { d: foot([42.5, 90.5], [47, 94]) },
-        ],
-        front: [
+        parts: [
           { d: NECK },
-          { d: arm([22, 29], [17.5, 40], [16, 50]) },
           { d: TORSO_SIDE },
-          { d: leg([27.5, 49], [23, 72], [19, 90]) },
-          { d: foot([19, 90.5], [14.5, 94]) },
+          { d: line([27, 57], [22.5, 75], [18.5, 92], [14, 94.4]) },
+          { d: line([33, 57], [38, 75], [42.5, 92], [47, 94.4]) },
+          { d: line([26.2, 31], [22, 43], [20.6, 54]) },
+          { d: line([35.6, 31], [40, 42], [41.4, 52]) },
         ],
-        headNode: head(30, 12, -4),
+        head: { cx: 30, cy: 11.4, rot: -4 },
       };
 
     case "think":
       return {
-        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [16.5, 41], [24.5, 25.5]) }],
-        front: [...upright()],
-        headNode: head(30, 13, -9),
+        parts: [
+          { d: NECK },
+          { d: TORSO },
+          ...LEGS,
+          ARM_R,
+          { d: line([20, 31], [15.6, 44], [24.6, 24.5]) },
+        ],
+        head: { cx: 30, cy: 12, rot: -9 },
       };
 
     case "point":
       return {
-        back: [{ d: arm([21, 29], [17, 41], [16, 53]) }, { d: arm([39, 29], [46.5, 30.5], [55.5, 31.5]) }],
-        front: [...upright()],
-        headNode: head(30, 13, 3),
+        parts: [
+          { d: NECK },
+          { d: TORSO },
+          ...LEGS,
+          ARM_L,
+          { d: line([40, 31], [47.5, 31], [56, 31]) },
+        ],
+        head: { cx: 30, cy: 12, rot: 3 },
       };
 
     case "raise":
       return {
-        back: [{ d: arm([21, 29], [17, 41], [16, 53]) }, { d: arm([39, 29], [44, 18], [45.5, 5]) }],
-        front: [...upright()],
-        headNode: head(30, 13, 4),
+        parts: [
+          { d: NECK },
+          { d: TORSO },
+          ...LEGS,
+          ARM_L,
+          { d: line([40, 31], [45, 19], [46, 5.5]) },
+        ],
+        head: { cx: 30, cy: 12, rot: 3 },
       };
 
     case "cheer":
       return {
-        back: [{ d: arm([21, 29], [15.5, 18], [13.5, 5]) }, { d: arm([39, 29], [44.5, 18], [46.5, 5]) }],
-        front: [...upright(LEGS_APART)],
-        headNode: head(30, 13),
+        parts: [
+          { d: NECK },
+          { d: TORSO },
+          ...LEGS_APART,
+          { d: line([20, 31], [15, 19], [14, 5.5]) },
+          { d: line([40, 31], [45, 19], [46, 5.5]) },
+        ],
+        head: H,
       };
 
     case "sit":
       return {
-        back: [...CHAIR],
-        front: [...SEATED, { d: arm([31, 30], [39, 43], [46, 50]) }],
-        headNode: head(30, 13, 2),
+        parts: [...CHAIR, ...SEATED, { d: line([30.5, 32], [38, 44], [45.5, 50]) }],
+        head: { cx: 30, cy: 12, rot: 2 },
       };
 
     case "read":
       return {
-        back: CHAIR,
-        front: [
+        parts: [
+          ...CHAIR,
           ...SEATED,
-          { d: "M35 46 L 54 39 L 58 49 L 39 56 Z" },
-          { d: "M44.5 42.5 L 56 44.5", soft: true },
-          { d: arm([31, 30], [38, 42], [44.5, 47]) },
+          { d: line([30.5, 32], [37, 43], [43, 46.5]) },
+          { d: "M36.5 47.5 L53.5 40.5 L57 49 L40 56 Z" },
+          { d: "M45 44 L55 44.8", soft: true },
         ],
-        headNode: head(30, 13, 9),
+        head: { cx: 30, cy: 12, rot: 10 },
       };
 
     case "listen":
       return {
-        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [17, 41], [16, 53]) }],
-        front: [...upright()],
+        parts: [{ d: NECK }, { d: TORSO }, ...LEGS, ARM_L, ARM_R],
         extra: [
-          { d: "M20.6 11 C 20.6 1.5, 39.4 1.5, 39.4 11" },
-          { d: "M18.2 9.4 h4.4 v7.2 h-4.4 z" },
-          { d: "M37.4 9.4 h4.4 v7.2 h-4.4 z" },
+          { d: "M20.8 10 C20.8 1.6 39.2 1.6 39.2 10" },
+          { d: "M18.4 8.6 h4.6 v7.4 h-4.6 z" },
+          { d: "M37 8.6 h4.6 v7.4 h-4.6 z" },
         ],
-        headNode: head(30, 13),
+        head: H,
       };
 
     case "lift":
       return {
-        back: [{ d: arm([21, 29], [16.5, 21], [18.5, 12]) }, { d: arm([39, 29], [43.5, 21], [41.5, 12]) }],
-        front: [...upright(LEGS_APART)],
-        extra: [
-          { d: "M8 9.5 h44" },
-          { d: "M11 5 v9 M7 6.5 v6 M49 5 v9 M53 6.5 v6" },
+        parts: [
+          { d: NECK },
+          { d: TORSO },
+          ...LEGS_APART,
+          { d: line([20, 31], [16.5, 21], [18.5, 11.5]) },
+          { d: line([40, 31], [43.5, 21], [41.5, 11.5]) },
         ],
-        headNode: head(30, 14),
+        extra: [{ d: "M8 9 H52" }, { d: "M11 4.5 V13.5 M7 6 V12 M49 4.5 V13.5 M53 6 V12" }],
+        head: { cx: 30, cy: 13 },
       };
 
     case "rest":
       return {
-        back: [{ d: arm([39, 30], [45.5, 42], [40.5, 54]) }],
-        front: [
+        parts: [
           { d: NECK },
           { d: TORSO },
-          { d: limb([[27, 55], [17, 73], [27, 83]], [14, 9, 6]) },
-          { d: limb([[33, 55], [43, 73], [33, 83]], [14, 9, 6]) },
-          { d: arm([21, 30], [14.5, 42], [19.5, 54]) },
+          { d: line([26, 57], [17.5, 73], [29, 80.5]) },
+          { d: line([34, 57], [42.5, 73], [31, 80.5]) },
+          { d: line([20, 31], [14.5, 43], [19.5, 54]) },
+          { d: line([40, 31], [45.5, 43], [40.5, 54]) },
         ],
-        headNode: head(30, 13),
+        head: H,
       };
 
     case "stand":
     default:
       return {
-        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [17, 41], [16, 53]) }],
-        front: [...upright()],
-        headNode: head(30, 13),
+        parts: [{ d: NECK }, { d: TORSO }, ...LEGS, ARM_L, ARM_R],
+        head: H,
       };
   }
 }
 
 function Drawing({ pose }: { pose: Pose }) {
-  const { back, front, headNode, extra } = parts(pose);
-  const render = (p: Part, i: number) => (
-    <path key={i} d={p.d} fill={p.soft ? "none" : "var(--fig-bg, #08080a)"} opacity={p.soft ? 0.55 : 1} />
-  );
+  const { parts, head, extra } = poseParts(pose);
   return (
     <>
-      {back.map(render)}
-      {front.map((p, i) => render(p, i + 100))}
-      {headNode}
+      {parts.map((p, i) => (
+        <path key={i} d={p.d} opacity={p.soft ? 0.5 : 1} />
+      ))}
+      <circle
+        cx={head.cx}
+        cy={head.cy}
+        r={HEAD.r}
+        transform={head.rot ? `rotate(${head.rot} ${head.cx} ${head.cy})` : undefined}
+      />
       {extra?.map((p, i) => (
-        <path key={`x${i}`} d={p.d} fill="none" />
+        <path key={`x${i}`} d={p.d} />
       ))}
     </>
   );
@@ -260,17 +244,22 @@ type FigProps = {
   tone?: "gold" | "paper" | "dim" | "ice";
   mirror?: boolean;
   tilt?: number;
+  /** Fine adjustment of the line weight — a crowd of small figures wants a
+      lighter line than a single large one, even though the rig is shared. */
+  weight?: number;
   style?: CSSProperties;
 };
+
+const STROKE = 2.6;
 
 /** A single figure, standalone. */
 export default function Person({ pose = "stand", tone = "paper", mirror, tilt = 0, style }: FigProps) {
   return (
     <svg viewBox="0 0 60 100" className="fig" style={style} aria-hidden="true">
       <g
-        fill="var(--fig-bg, #08080a)"
+        fill="none"
         stroke={TONE[tone]}
-        strokeWidth="1.5"
+        strokeWidth={STROKE}
         strokeLinecap="round"
         strokeLinejoin="round"
         transform={`${mirror ? "translate(60,0) scale(-1,1)" : ""} rotate(${tilt} 30 50)`}
@@ -281,7 +270,7 @@ export default function Person({ pose = "stand", tone = "paper", mirror, tilt = 
   );
 }
 
-/** The same figure placed inside a wider scene, at a shared scale. */
+/** The same figure inside a wider scene, at a shared stroke weight. */
 export function Fig({
   pose = "stand",
   x = 0,
@@ -290,13 +279,14 @@ export function Fig({
   tone = "paper",
   mirror,
   tilt = 0,
+  weight = 1,
 }: FigProps & { x?: number; y?: number; scale?: number }) {
   return (
     <g
       transform={`translate(${x} ${y}) scale(${scale}) ${mirror ? "translate(60,0) scale(-1,1)" : ""} rotate(${tilt} 30 50)`}
-      fill="var(--fig-bg, #08080a)"
+      fill="none"
       stroke={TONE[tone]}
-      strokeWidth={1.5 / scale}
+      strokeWidth={(STROKE * weight) / scale}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
@@ -411,7 +401,7 @@ export function Prop({
       transform={`translate(${x} ${y}) scale(${scale})`}
       fill="none"
       stroke={TONE[tone]}
-      strokeWidth={1.8 / scale}
+      strokeWidth={2 / scale}
       strokeLinecap="round"
       strokeLinejoin="round"
     >

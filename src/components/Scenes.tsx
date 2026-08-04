@@ -157,7 +157,7 @@ export function SceneClassroom() {
       <g {...line} opacity="0.5">
         <path d="M14 14 h276 v182 h-276 z" />
       </g>
-      <Fig pose="point" x={20} y={92} scale={0.78} tone="gold" />
+      <Fig pose="point" x={20} y={92} scale={0.78} weight={0.85} tone="gold" />
       {rows.map((r) =>
         cols.map((c) => (
           <Fig
@@ -166,6 +166,7 @@ export function SceneClassroom() {
             x={72 + c * 21}
             y={40 + r * 52}
             scale={0.42}
+            weight={0.62}
             tone="dim"
           />
         ))
