@@ -1,5 +1,6 @@
 import { useReveal } from "../lib/hooks";
 import { SceneEngine } from "./Scenes";
+import Section, { SECTIONS } from "./Section";
 
 const CARDS = [
   {
@@ -53,15 +54,7 @@ export default function Engine() {
   const grid = useReveal<HTMLDivElement>(0.06);
 
   return (
-    <section className="sec" id="engine">
-      <div className="shell">
-        <div className="sec-head">
-          <span className="num">§ 04</span>
-          <span className="lbl">Engine</span>
-          <span className="spacer" />
-          <span className="lbl">Why this is hard to build</span>
-        </div>
-
+    <Section meta={SECTIONS[3]} band>
         <div className="sec-title-row reveal" ref={head}>
           <h2 className="h2">
             Personalization is easy to claim,
@@ -97,7 +90,6 @@ export default function Engine() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

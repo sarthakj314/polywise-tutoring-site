@@ -3,13 +3,16 @@ import { useCycle } from "../lib/hooks";
 import { MODALITIES } from "../lib/data";
 import { Fig } from "./Figures";
 
-const CHIP_POS = [
-  { top: "5%", left: "50%", transform: "translateX(-50%)", delay: "0s" },
-  { top: "27%", left: "88%", transform: "translateX(-50%)", delay: "1.4s" },
-  { top: "72%", left: "84%", transform: "translateX(-50%)", delay: "2.6s" },
-  { top: "88%", left: "42%", transform: "translateX(-50%)", delay: "3.7s" },
-  { top: "45%", left: "2%", transform: "translateX(0)", delay: "0.8s" },
-];
+/* Chips sit on the same rays the spokes are drawn along, so every line
+   lands exactly on the label it belongs to. */
+const RING = 46; // % of the box
+const ANGLES = [0, 1, 2, 3, 4].map((i) => (-90 + i * 72) * (Math.PI / 180));
+const CHIP_POS = ANGLES.map((a, i) => ({
+  left: `${50 + Math.cos(a) * RING}%`,
+  top: `${50 + Math.sin(a) * RING}%`,
+  transform: "translate(-50%, -50%)",
+  animationDelay: `${i * 0.7}s`,
+}));
 
 /** The hero mark: a floor-plan of nested rooms with a live core. */
 export default function PalaceGlyph() {
@@ -88,25 +91,25 @@ export default function PalaceGlyph() {
         </g>
 
         {/* core — the person the rooms are built around */}
-        <circle cx="200" cy="200" r="58" fill="url(#gCore)" />
+        <circle cx="200" cy="196" r="66" fill="url(#gCore)" />
         <circle cx="200" cy="200" r="26" fill="none" stroke="rgba(220,174,101,0.45)" strokeWidth="1">
           <animate attributeName="r" values="26;56;26" dur="4.8s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.55;0;0.55" dur="4.8s" repeatCount="indefinite" />
         </circle>
-        <Fig pose="stand" x={177} y={158} scale={0.78} tone="paper" />
-        <path d="M172 240 h56" stroke="rgba(220,174,101,0.55)" strokeWidth="1.4" strokeLinecap="round" />
+        <Fig pose="stand" x={166} y={142} scale={1.12} tone="paper" />
+        <path d="M158 252 h84" stroke="rgba(220,174,101,0.5)" strokeWidth="1.4" strokeLinecap="round" />
 
-        {/* spokes to the modality chips */}
+        {/* spokes: drawn along the exact rays the chips are pinned to */}
         {MODALITIES.map((m, i) => {
-          const a = (-90 + i * 72) * (Math.PI / 180);
+          const a = ANGLES[i];
           const on = i === active;
           return (
             <line
               key={m.id}
-              x1={200 + Math.cos(a) * 70}
-              y1={200 + Math.sin(a) * 70}
-              x2={200 + Math.cos(a) * 150}
-              y2={200 + Math.sin(a) * 150}
+              x1={200 + Math.cos(a) * 74}
+              y1={200 + Math.sin(a) * 74}
+              x2={200 + Math.cos(a) * (RING * 4 - 30)}
+              y2={200 + Math.sin(a) * (RING * 4 - 30)}
               stroke={on ? "rgba(220,174,101,0.75)" : "rgba(238,232,222,0.12)"}
               strokeWidth={on ? 1.4 : 1}
               strokeDasharray={on ? "0" : "2 5"}
@@ -120,7 +123,7 @@ export default function PalaceGlyph() {
         <div
           key={m.id}
           className={i === active ? "glyph-chip on" : "glyph-chip"}
-          style={{ ...CHIP_POS[i], animationDelay: CHIP_POS[i].delay } as CSSProperties}
+          style={CHIP_POS[i] as CSSProperties}
         >
           <i />
           {m.label}

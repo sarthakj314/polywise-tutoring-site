@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MODALITIES, Modality } from "../lib/data";
 import { useReveal } from "../lib/hooks";
 import { Fig } from "./Figures";
+import Section, { SECTIONS } from "./Section";
 
 const WAVE = [
   0.3, 0.55, 0.42, 0.78, 0.9, 0.62, 0.38, 0.5, 0.72, 0.95, 0.6, 0.34, 0.46, 0.66, 0.88, 0.7, 0.44, 0.32, 0.58,
@@ -57,15 +58,7 @@ export default function Palace({ initialMode = "tutor" as Modality, initialWeek 
         ];
 
   return (
-    <section className="sec" id="palace">
-      <div className="shell">
-        <div className="sec-head">
-          <span className="num">§ 03</span>
-          <span className="lbl">A generated palace</span>
-          <span className="spacer" />
-          <span className="lbl">Live template · click anything</span>
-        </div>
-
+    <Section meta={SECTIONS[2]}>
         <div className="sec-title-row reveal" ref={head}>
           <h2 className="h2">
             This is what the system
@@ -80,7 +73,18 @@ export default function Palace({ initialMode = "tutor" as Modality, initialWeek 
         </div>
 
         <div className="reveal" ref={frame}>
-          <div className="demo-frame">
+          <div className="mock">
+            <div className="mock-label">
+              <span className="mock-dot" />
+              <b>Product mockup</b>
+              <span>everything inside this frame is the app — not this website</span>
+            </div>
+            <div className="mock-stage">
+              <span className="brk tl" />
+              <span className="brk tr" />
+              <span className="brk bl" />
+              <span className="brk br" />
+              <div className="demo-frame">
             <div className="demo-bar">
               <div className="lights">
                 <i />
@@ -172,6 +176,9 @@ export default function Palace({ initialMode = "tutor" as Modality, initialWeek 
                   ))}
                 </div>
 
+                <div className="room-hint mono">
+                  ↑ five rooms, same concept — click one
+                </div>
                 <div className="stage-area">
                   <div className="concept">
                     <h4>Le Châtelier's principle</h4>
@@ -223,6 +230,9 @@ export default function Palace({ initialMode = "tutor" as Modality, initialWeek 
             </div>
           </div>
 
+            </div>
+          </div>
+
           <div className="demo-under">
             <span className="mono">Watch it move —</span>
             <div className="week-toggle" role="group" aria-label="Timeline">
@@ -239,8 +249,7 @@ export default function Palace({ initialMode = "tutor" as Modality, initialWeek 
             </span>
           </div>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }
 

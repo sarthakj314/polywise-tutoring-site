@@ -34,21 +34,30 @@ runtime dependencies are `react` and `react-dom`.
 
 All illustrations come from two files, so the whole site reads as one hand:
 
-- `src/components/Figures.tsx` — one character in a 60 × 100 box (head r9 at 30,15; hips at
-  30,62; floor at 96), drawn in eleven poses, plus a small library of props at the same
-  stroke weight. Never redraw a person inline; add a pose here instead.
+- `src/lib/draw.ts` — `limb(spine, widths, caps)` offsets a few joint points into a closed,
+  tapered contour. That is what makes the people contour drawings rather than stick figures:
+  shoulders wider than waist, thighs wider than calves, hands and feet that come to a point.
+  Caps are round where a limb ends in the open and flat where it disappears under another part.
+- `src/components/Figures.tsx` — one character in a 60 × 100 box (head at 30,13; shoulders y27;
+  hips y53; floor y96), in eleven poses, plus props at the same stroke weight. Parts are filled
+  with `--fig-bg` (set per surface in CSS) and stroked, so limbs overlap cleanly. Never redraw a
+  person inline; add a pose here instead.
 - `src/components/Scenes.tsx` — compositions built from those parts: the six roadmap scenes,
   the classroom comparison, the per-domain vignettes, the engine diagrams, the CTA.
 
-Stroke weight is normalised through the `scale` prop (`strokeWidth={2 / scale}`), so a figure
+Stroke weight is normalised through the `scale` prop (`strokeWidth={1.5 / scale}`), so a figure
 placed at any size keeps the same line thickness as everything around it.
 
 ## Type & color
 
 - Display: Fraunces · Body: Instrument Sans · Labels: IBM Plex Mono (loaded from Google Fonts
   in `index.html`; every family has a system fallback stack in `src/index.css`).
-- Near-black ground (`#08080a`) with a champagne→copper gradient (`--grad-warm`) as the only
-  accent, plus a cold `--ice` used exclusively for measured/telemetry values.
+- Near-black ground (`#08080a`) with a champagne→copper gradient (`--grad-warm`) as the brand
+  accent, plus a cold `--ice` for measured/telemetry values.
+- Each numbered section owns a hue, declared once in `SECTIONS` (`src/components/Section.tsx`)
+  and exposed to its subtree as `--sec`: 01 champagne, 02 teal, 03 ember, 04 periwinkle. The
+  opener, the nav pip, the sticky "where am I" bar, card borders and chips all read from it, so
+  you can tell which part of the argument you are in from any scroll position.
 
 ## Deploying
 

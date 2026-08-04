@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DOMAINS } from "../lib/data";
 import { useReveal } from "../lib/hooks";
 import { SceneDomain } from "./Scenes";
+import Section, { SECTIONS } from "./Section";
 
 export default function Atlas() {
   const [sel, setSel] = useState(0);
@@ -10,15 +11,7 @@ export default function Atlas() {
   const body = useReveal<HTMLDivElement>(0.06);
 
   return (
-    <section className="sec" id="atlas">
-      <div className="shell">
-        <div className="sec-head">
-          <span className="num">§ 01</span>
-          <span className="lbl">The atlas</span>
-          <span className="spacer" />
-          <span className="lbl">{DOMAINS.length} domains · 214 tracks</span>
-        </div>
-
+    <Section meta={SECTIONS[0]}>
         <div className="sec-title-row reveal" ref={head}>
           <h2 className="h2">
             The catalog is deliberately
@@ -82,7 +75,6 @@ export default function Atlas() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 }

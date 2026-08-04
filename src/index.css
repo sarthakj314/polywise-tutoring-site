@@ -540,7 +540,7 @@ h4 {
   text-transform: uppercase;
   color: var(--paper-dim);
   white-space: nowrap;
-  animation: float 9s ease-in-out infinite;
+  transition: color 0.5s var(--ease), border-color 0.5s var(--ease);
 }
 
 .glyph-chip i {
@@ -628,7 +628,7 @@ h4 {
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: clamp(24px, 4vw, 64px);
   align-items: end;
-  padding: 42px 0 54px;
+  padding: 0 0 46px;
 }
 
 @media (max-width: 900px) {
@@ -1974,4 +1974,345 @@ h4 {
 .cta-scene {
   width: min(300px, 70vw);
   margin-bottom: 6px;
+}
+
+/* ==================================================================
+   Section identity — each numbered part of the page gets its own
+   colour, its own opener and its own ground tone, so you always know
+   which room of the argument you are standing in.
+   ================================================================== */
+
+.sec {
+  --sec: var(--gold-2);
+  position: relative;
+  padding: clamp(64px, 7vw, 104px) 0 clamp(40px, 5vw, 72px);
+}
+
+.sec.band {
+  background: #0b0b0f;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.sec.band::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--sec), transparent 42%);
+  opacity: 0.55;
+}
+
+.sec:not(.band)::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--sec), transparent 42%);
+  opacity: 0.45;
+}
+
+.sec-open {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 40px);
+  align-items: start;
+  padding-bottom: clamp(26px, 3vw, 40px);
+  margin-bottom: clamp(26px, 3.4vw, 46px);
+  border-bottom: 1px solid var(--line);
+}
+
+.sec-open-n {
+  font-family: var(--serif);
+  font-size: clamp(56px, 8vw, 112px);
+  line-height: 0.78;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--sec);
+  opacity: 0.9;
+  display: block;
+}
+
+.sec-open-top {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.sec-open-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--sec);
+}
+
+.sec-open-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+
+.sec-open-purpose {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(19px, 2.1vw, 27px);
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+  max-width: 40ch;
+}
+
+/* section colour bleeds into the local accents */
+.sec .sec-head .num,
+.sec .stage.lit .stage-n,
+.sec .eng .en,
+.sec .atlas-meta .cell .v {
+  color: var(--sec);
+}
+
+.sec .atlas-row.sel::before,
+.sec .mode-tab.on::after {
+  background: var(--sec);
+}
+
+.sec .atlas-row.sel .ix,
+.sec .atlas-row .arw,
+.sec .track .tn::before {
+  color: var(--sec);
+}
+
+.sec .track .tn::before {
+  background: var(--sec);
+}
+
+.sec .stage.lit .stage-card {
+  border-color: color-mix(in srgb, var(--sec) 34%, transparent);
+}
+
+.sec .stage.lit .chip {
+  border-color: color-mix(in srgb, var(--sec) 26%, transparent);
+  color: var(--sec);
+}
+
+.sec .loop-return {
+  border-color: color-mix(in srgb, var(--sec) 34%, transparent);
+  background: color-mix(in srgb, var(--sec) 5%, transparent);
+}
+
+.sec .loop-return .txt b {
+  color: var(--sec);
+}
+
+/* ---------- where am I (under the nav) ---------- */
+
+.nav-where {
+  height: 0;
+  overflow: hidden;
+  border-top: 1px solid transparent;
+  transition: height 0.45s var(--ease), border-color 0.45s;
+}
+
+.nav.stuck .nav-where.on {
+  height: 34px;
+  border-top-color: var(--line);
+}
+
+.nav-where-in {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gut);
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-where-n {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--sec, var(--gold-2));
+}
+
+.nav-where-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+
+.nav-where-purpose {
+  font-size: 12px;
+  color: var(--paper-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-progress {
+  height: 2px;
+  background: var(--sec, var(--gold-2));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  opacity: 0.85;
+}
+
+.nav-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.nav-pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+  transition: all 0.4s var(--ease);
+}
+
+.nav-links a.on {
+  color: var(--sec);
+}
+
+.nav-links a.on .nav-pip {
+  background: var(--sec);
+  border-color: var(--sec);
+  opacity: 1;
+}
+
+.nav-links a.on::after {
+  width: 100%;
+  background: var(--sec);
+}
+
+@media (max-width: 1120px) {
+  .nav-where-purpose {
+    display: none;
+  }
+}
+
+/* ---------- "this is the product, not the page" ---------- */
+
+.mock {
+  position: relative;
+  padding: 16px;
+  border: 1px dashed color-mix(in srgb, var(--sec) 42%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--sec) 3.5%, transparent);
+}
+
+.mock-label {
+  position: absolute;
+  top: -13px;
+  left: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px;
+  background: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--sec) 50%, transparent);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.mock-label b {
+  color: var(--sec);
+  font-weight: 400;
+}
+
+.mock-label span:last-child {
+  color: var(--paper-faint);
+  letter-spacing: 0.08em;
+  text-transform: none;
+  font-size: 10.5px;
+}
+
+.mock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--sec);
+}
+
+.mock-stage {
+  position: relative;
+}
+
+.brk {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--sec);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.brk.tl {
+  top: -7px;
+  left: -7px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.brk.tr {
+  top: -7px;
+  right: -7px;
+  border-left: 0;
+  border-bottom: 0;
+}
+.brk.bl {
+  bottom: -7px;
+  left: -7px;
+  border-right: 0;
+  border-top: 0;
+}
+.brk.br {
+  bottom: -7px;
+  right: -7px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.room-hint {
+  padding: 9px 28px 0;
+  font-size: 10px;
+  color: var(--paper-faint);
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
+@media (max-width: 700px) {
+  .mock-label span:last-child {
+    display: none;
+  }
+}
+
+.loop-head circle:last-child {
+  filter: drop-shadow(0 0 6px rgba(127, 201, 189, 0.9));
+}
+
+/* figures inherit the panel they sit on, so their fills stay invisible */
+.stage-card,
+.eng,
+.scene-band,
+.demo-frame {
+  --fig-bg: #0d0d11;
+}
+
+.sec.band .stage-card {
+  --fig-bg: #131318;
 }

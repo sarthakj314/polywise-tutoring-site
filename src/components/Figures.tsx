@@ -1,17 +1,18 @@
 /* ------------------------------------------------------------------
-   The Polywise line people.
-   One character, one stroke weight, one set of proportions — reused
-   everywhere on the site so the whole page reads as a single hand.
+   The Polywise people.
 
-   Grid: every figure lives in a 60 × 100 box.
-     head   r 9   at (30, 15)
-     neck   (30, 24) → (30, 30)
-     spine  (30, 30) → (30, 62)
-     hips   (30, 62)
-     floor  y = 96
+   Not stick figures: each person is drawn as a set of tapered contours
+   — shoulders wider than waist, thighs wider than calves, hands and
+   feet that come to a point — generated from a skeleton in lib/draw.
+   Every part is filled with the page colour and stroked, so limbs
+   overlap cleanly instead of crossing through the body.
+
+   Grid: a 60 × 100 box. Head at (30,13). Shoulders y27. Hips y53.
+   Floor y96. Everything on the site uses this same rig.
    ------------------------------------------------------------------ */
 
 import { CSSProperties, ReactNode } from "react";
+import { limb, stroke, Pt } from "../lib/draw";
 
 export type Pose =
   | "stand"
@@ -19,12 +20,240 @@ export type Pose =
   | "think"
   | "point"
   | "raise"
+  | "cheer"
   | "sit"
   | "read"
   | "listen"
   | "lift"
-  | "cheer"
   | "rest";
+
+const TONE: Record<string, string> = {
+  gold: "#dcae65",
+  paper: "#efeae1",
+  dim: "rgba(239,234,225,0.45)",
+  ice: "#a9c9c3",
+};
+
+/* ---------- shared parts ---------- */
+
+const NECK = limb(
+  [
+    [30, 19],
+    [30, 29],
+  ],
+  [7, 9.5],
+  { start: "flat", end: "flat" }
+);
+
+const TORSO = limb(
+  [
+    [30, 27],
+    [30, 40],
+    [30, 53],
+  ],
+  [21, 15.5, 17],
+  { end: "flat" }
+);
+
+const TORSO_SIDE = limb(
+  [
+    [30, 27],
+    [30.5, 41],
+    [30, 53],
+  ],
+  [15, 13.5, 16],
+  { end: "flat" }
+);
+
+const HAIR = "M23.2 7.6 C 26 4.4, 34 4.2, 36.8 7.2";
+
+function arm(a: Pt, b: Pt, c: Pt) {
+  return limb([a, b, c], [9, 6.4, 4.2], { start: "flat" });
+}
+
+function leg(a: Pt, b: Pt, c: Pt) {
+  return limb([a, b, c], [13, 8.4, 5.4], { start: "flat" });
+}
+
+function foot(a: Pt, b: Pt) {
+  return limb([a, b], [5.4, 3.4]);
+}
+
+type Part = { d: string; soft?: boolean };
+
+function head(cx = 30, cy = 13, rot = 0): ReactNode {
+  return (
+    <g key="head" transform={rot ? `rotate(${rot} ${cx} ${cy})` : undefined}>
+      <ellipse cx={cx} cy={cy} rx="7.2" ry="8.6" />
+      <path d={HAIR} fill="none" opacity="0.75" transform={`translate(${cx - 30} ${cy - 13})`} />
+    </g>
+  );
+}
+
+/* ---------- poses ---------- */
+
+const LEGS_TOGETHER: Part[] = [
+  { d: leg([26, 49], [24.5, 73], [23.5, 92]) },
+  { d: leg([34, 49], [35.5, 73], [36.5, 92]) },
+  { d: foot([23.5, 92.5], [19.5, 95.5]) },
+  { d: foot([36.5, 92.5], [40.5, 95.5]) },
+];
+
+const LEGS_APART: Part[] = [
+  { d: leg([26, 49], [23.5, 73], [21.5, 92]) },
+  { d: leg([34, 49], [36.5, 73], [38.5, 92]) },
+  { d: foot([21.5, 92.5], [17.5, 95.5]) },
+  { d: foot([38.5, 92.5], [42.5, 95.5]) },
+];
+
+const CHAIR: Part[] = [
+  { d: stroke([[21, 63], [21, 38]]), soft: true },
+  { d: stroke([[19, 63], [53, 63]]), soft: true },
+  { d: stroke([[23, 63], [23, 93]]), soft: true },
+  { d: stroke([[51, 63], [51, 93]]), soft: true },
+];
+
+const SEATED: Part[] = [
+  { d: NECK },
+  { d: TORSO_SIDE },
+  { d: limb([[30, 54], [39, 58], [49, 59]], [16, 12, 9], { start: "flat" }) },
+  { d: limb([[49, 59], [49.5, 74], [50, 90]], [9, 7, 5.2], { start: "flat" }) },
+  { d: foot([50, 90.5], [55, 94]) },
+];
+
+/** Front-view body: neck, torso, then the legs on top so the torso ends cleanly. */
+function upright(legs: Part[] = LEGS_TOGETHER): Part[] {
+  return [{ d: NECK }, { d: TORSO }, ...legs];
+}
+
+function parts(pose: Pose): { back: Part[]; front: Part[]; headNode: ReactNode; extra?: Part[] } {
+  switch (pose) {
+    case "walk":
+      return {
+        back: [
+          { d: arm([38, 29], [42.5, 40], [44, 50]) },
+          { d: leg([32.5, 49], [38, 72], [42.5, 90]) },
+          { d: foot([42.5, 90.5], [47, 94]) },
+        ],
+        front: [
+          { d: NECK },
+          { d: arm([22, 29], [17.5, 40], [16, 50]) },
+          { d: TORSO_SIDE },
+          { d: leg([27.5, 49], [23, 72], [19, 90]) },
+          { d: foot([19, 90.5], [14.5, 94]) },
+        ],
+        headNode: head(30, 12, -4),
+      };
+
+    case "think":
+      return {
+        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [16.5, 41], [24.5, 25.5]) }],
+        front: [...upright()],
+        headNode: head(30, 13, -9),
+      };
+
+    case "point":
+      return {
+        back: [{ d: arm([21, 29], [17, 41], [16, 53]) }, { d: arm([39, 29], [46.5, 30.5], [55.5, 31.5]) }],
+        front: [...upright()],
+        headNode: head(30, 13, 3),
+      };
+
+    case "raise":
+      return {
+        back: [{ d: arm([21, 29], [17, 41], [16, 53]) }, { d: arm([39, 29], [44, 18], [45.5, 5]) }],
+        front: [...upright()],
+        headNode: head(30, 13, 4),
+      };
+
+    case "cheer":
+      return {
+        back: [{ d: arm([21, 29], [15.5, 18], [13.5, 5]) }, { d: arm([39, 29], [44.5, 18], [46.5, 5]) }],
+        front: [...upright(LEGS_APART)],
+        headNode: head(30, 13),
+      };
+
+    case "sit":
+      return {
+        back: [...CHAIR],
+        front: [...SEATED, { d: arm([31, 30], [39, 43], [46, 50]) }],
+        headNode: head(30, 13, 2),
+      };
+
+    case "read":
+      return {
+        back: CHAIR,
+        front: [
+          ...SEATED,
+          { d: "M35 46 L 54 39 L 58 49 L 39 56 Z" },
+          { d: "M44.5 42.5 L 56 44.5", soft: true },
+          { d: arm([31, 30], [38, 42], [44.5, 47]) },
+        ],
+        headNode: head(30, 13, 9),
+      };
+
+    case "listen":
+      return {
+        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [17, 41], [16, 53]) }],
+        front: [...upright()],
+        extra: [
+          { d: "M20.6 11 C 20.6 1.5, 39.4 1.5, 39.4 11" },
+          { d: "M18.2 9.4 h4.4 v7.2 h-4.4 z" },
+          { d: "M37.4 9.4 h4.4 v7.2 h-4.4 z" },
+        ],
+        headNode: head(30, 13),
+      };
+
+    case "lift":
+      return {
+        back: [{ d: arm([21, 29], [16.5, 21], [18.5, 12]) }, { d: arm([39, 29], [43.5, 21], [41.5, 12]) }],
+        front: [...upright(LEGS_APART)],
+        extra: [
+          { d: "M8 9.5 h44" },
+          { d: "M11 5 v9 M7 6.5 v6 M49 5 v9 M53 6.5 v6" },
+        ],
+        headNode: head(30, 14),
+      };
+
+    case "rest":
+      return {
+        back: [{ d: arm([39, 30], [45.5, 42], [40.5, 54]) }],
+        front: [
+          { d: NECK },
+          { d: TORSO },
+          { d: limb([[27, 55], [17, 73], [27, 83]], [14, 9, 6]) },
+          { d: limb([[33, 55], [43, 73], [33, 83]], [14, 9, 6]) },
+          { d: arm([21, 30], [14.5, 42], [19.5, 54]) },
+        ],
+        headNode: head(30, 13),
+      };
+
+    case "stand":
+    default:
+      return {
+        back: [{ d: arm([39, 29], [43.5, 41], [45, 53]) }, { d: arm([21, 29], [17, 41], [16, 53]) }],
+        front: [...upright()],
+        headNode: head(30, 13),
+      };
+  }
+}
+
+function Drawing({ pose }: { pose: Pose }) {
+  const { back, front, headNode, extra } = parts(pose);
+  const render = (p: Part, i: number) => (
+    <path key={i} d={p.d} fill={p.soft ? "none" : "var(--fig-bg, #08080a)"} opacity={p.soft ? 0.55 : 1} />
+  );
+  return (
+    <>
+      {back.map(render)}
+      {front.map((p, i) => render(p, i + 100))}
+      {headNode}
+      {extra?.map((p, i) => (
+        <path key={`x${i}`} d={p.d} fill="none" />
+      ))}
+    </>
+  );
+}
 
 type FigProps = {
   pose?: Pose;
@@ -34,179 +263,25 @@ type FigProps = {
   style?: CSSProperties;
 };
 
-const TONE: Record<string, string> = {
-  gold: "#dcae65",
-  paper: "#efeae1",
-  dim: "rgba(239,234,225,0.42)",
-  ice: "#a9c9c3",
-};
-
-/** The body, drawn pose by pose. Coordinates only — colour comes from the wrapper. */
-export function Body({ pose = "stand" }: { pose?: Pose }) {
-  const head = <circle cx="30" cy="15" r="9" />;
-  const neck = <path d="M30 24 v6" />;
-
-  switch (pose) {
-    case "walk":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 C 31 42, 29 52, 30 62" />
-          <path d="M30 35 C 24 41, 20 47, 17 54" />
-          <path d="M30 35 C 37 39, 42 42, 46 44" />
-          <path d="M30 62 C 26 72, 22 82, 17 92 M17 92 h7" />
-          <path d="M30 62 C 35 71, 40 80, 45 88 M45 88 l5 3" />
-        </>
-      );
-    case "think":
-      return (
-        <>
-          <circle cx="30" cy="15" r="9" transform="rotate(-10 30 15)" />
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 36 L 19 46 L 24 26" />
-          <path d="M30 37 C 36 43, 39 50, 40 57" />
-          <path d="M30 62 C 28 74, 26 84, 25 94 M25 94 h7" />
-          <path d="M30 62 C 34 74, 36 84, 37 94 M37 94 h7" />
-        </>
-      );
-    case "point":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 36 C 24 43, 21 50, 20 57" />
-          <path d="M30 35 C 38 34, 46 33, 53 32" />
-          <path d="M30 62 C 28 74, 26 84, 25 94 M25 94 h7" />
-          <path d="M30 62 C 34 74, 36 84, 37 94 M37 94 h7" />
-        </>
-      );
-    case "raise":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 35 L 42 24 L 45 7" />
-          <path d="M30 36 C 25 43, 22 50, 21 57" />
-          <path d="M30 62 C 28 74, 26 84, 25 94 M25 94 h7" />
-          <path d="M30 62 C 34 74, 36 84, 37 94 M37 94 h7" />
-        </>
-      );
-    case "cheer":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 35 L 43 26 L 47 10" />
-          <path d="M30 35 L 17 26 L 13 10" />
-          <path d="M30 62 C 27 74, 24 84, 22 94 M22 94 h7" />
-          <path d="M30 62 C 35 74, 38 84, 40 94 M40 94 h7" />
-        </>
-      );
-    case "sit":
-      return (
-        <>
-          {/* chair, behind */}
-          <path d="M24 62 h28 M26 40 L 26 62 M28 62 v28 M50 62 v28" opacity="0.55" />
-          {head}
-          {neck}
-          <path d="M30 30 v30" />
-          <path d="M30 37 L 40 48 L 47 53" />
-          <path d="M30 60 L 48 62 L 49 90" />
-        </>
-      );
-    case "read":
-      return (
-        <>
-          <path d="M24 62 h28 M26 40 L 26 62 M28 62 v28 M50 62 v28" opacity="0.55" />
-          <circle cx="30" cy="15" r="9" transform="rotate(9 30 15)" />
-          {neck}
-          <path d="M30 30 v30" />
-          <path d="M30 37 L 38 46 L 44 44" />
-          <path d="M36 40 L 52 35 L 56 45 L 40 50 Z" />
-          <path d="M40 41 L 50 38 M42 45 L 52 42" opacity="0.7" />
-          <path d="M30 60 L 48 62 L 49 90" />
-        </>
-      );
-    case "listen":
-      return (
-        <>
-          {head}
-          <path d="M18 14 C 18 4, 42 4, 42 14" />
-          <path d="M16 12 h4 v7 h-4 z" />
-          <path d="M40 12 h4 v7 h-4 z" />
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 36 C 24 42, 21 49, 21 56" />
-          <path d="M30 36 C 36 42, 39 49, 39 56" />
-          <path d="M30 62 C 28 74, 26 84, 25 94 M25 94 h7" />
-          <path d="M30 62 C 34 74, 36 84, 37 94 M37 94 h7" />
-        </>
-      );
-    case "lift":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 v32" />
-          <path d="M30 34 C 24 30, 20 24, 18 18" />
-          <path d="M30 34 C 36 30, 40 24, 42 18" />
-          <path d="M10 16 h40" />
-          <path d="M12 11 v10 M8 13 v6 M48 11 v10 M52 13 v6" />
-          <path d="M30 62 C 26 72, 24 82, 23 94 M23 94 h7" />
-          <path d="M30 62 C 34 72, 36 82, 37 94 M37 94 h7" />
-        </>
-      );
-    case "rest":
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 v34" />
-          <path d="M30 38 L 20 52" />
-          <path d="M30 38 L 40 52" />
-          <path d="M30 64 L 14 84 L 30 88 L 46 84 L 30 64" />
-        </>
-      );
-    case "stand":
-    default:
-      return (
-        <>
-          {head}
-          {neck}
-          <path d="M30 30 C 31 42, 29 52, 30 62" />
-          <path d="M30 36 C 24 43, 21 50, 20 58" />
-          <path d="M30 36 C 36 43, 39 50, 40 58" />
-          <path d="M30 62 C 28 74, 26 84, 25 94 M25 94 h7" />
-          <path d="M30 62 C 34 74, 36 84, 37 94 M37 94 h7" />
-        </>
-      );
-  }
-}
-
 /** A single figure, standalone. */
 export default function Person({ pose = "stand", tone = "paper", mirror, tilt = 0, style }: FigProps) {
   return (
     <svg viewBox="0 0 60 100" className="fig" style={style} aria-hidden="true">
       <g
-        fill="none"
+        fill="var(--fig-bg, #08080a)"
         stroke={TONE[tone]}
-        strokeWidth="2"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         transform={`${mirror ? "translate(60,0) scale(-1,1)" : ""} rotate(${tilt} 30 50)`}
       >
-        <Body pose={pose} />
+        <Drawing pose={pose} />
       </g>
     </svg>
   );
 }
 
-/** Places a figure inside a wider scene, at the same scale as everywhere else. */
+/** The same figure placed inside a wider scene, at a shared scale. */
 export function Fig({
   pose = "stand",
   x = 0,
@@ -219,18 +294,19 @@ export function Fig({
   return (
     <g
       transform={`translate(${x} ${y}) scale(${scale}) ${mirror ? "translate(60,0) scale(-1,1)" : ""} rotate(${tilt} 30 50)`}
-      fill="none"
+      fill="var(--fig-bg, #08080a)"
       stroke={TONE[tone]}
-      strokeWidth={2 / scale}
+      strokeWidth={1.5 / scale}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <Body pose={pose} />
+      <Drawing pose={pose} />
     </g>
   );
 }
 
-/** Shared props the people hold — same monoline vocabulary. */
+/* ---------- the objects they hold ---------- */
+
 export function Prop({
   kind,
   x = 0,
@@ -335,7 +411,7 @@ export function Prop({
       transform={`translate(${x} ${y}) scale(${scale})`}
       fill="none"
       stroke={TONE[tone]}
-      strokeWidth={2 / scale}
+      strokeWidth={1.8 / scale}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
